@@ -4,9 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-/* We will need this for the f2c code. */
-#include <f2c.h>
-
 /* The timer, define CPU_TPS as the nr. of ticks per second on this CPU. */
 #include "cycle.h"
 #ifndef CPU_TPS
@@ -14,7 +11,6 @@
 #endif
 
 /* Declarations for the external functions. */
-int daxpy_f2c ( integer *n , doublereal *da , doublereal *dx , integer *incx , doublereal *dy , integer *incy );
 int daxpy_f_ ( int *n , double *da , double *dx , int *incx , double *dy , int *incy );
 int daxpy_c ( int n , double da , double *dx ,  int incx , double *dy , int incy );
 int daxpy_cvec ( int n , double da , double *dx ,  int incx , double *dy , int incy );
@@ -57,19 +53,6 @@ int main ( int argc , char *argv[] ) {
         daxpy_f_( &N , &a , x , &one , y , &one );
     toc = getticks();
     printf( "daxpy_f took %.1f ms.\n" , (toc - tic) * itpms );
-
-    /* Re-set the values. */
-    for ( k = 0 ; k < N ; k++ ) {
-        x[k] = ((double)rand()) / RAND_MAX;
-        y[k] = ((double)rand()) / RAND_MAX;
-        }
-    
-    /* Run the f2c code. */
-    tic = getticks();
-    for ( k = 0 ; k < runs ; k++ )
-        daxpy_f2c( (integer *)&N , (doublereal *)&a , (doublereal *)x , (integer *)&one , (doublereal *)y , (integer *)&one );
-    toc = getticks();
-    printf( "daxpy_f2c took %.1f ms.\n" , (toc - tic) * itpms );
 
     /* Re-set the values. */
     for ( k = 0 ; k < N ; k++ ) {
